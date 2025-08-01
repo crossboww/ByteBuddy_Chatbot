@@ -4,6 +4,7 @@ import streamlit as st
 from groq import Groq
 import os
 from dotenv import load_dotenv
+from services.chat_history import save_chat, load_chat
 
 load_dotenv()
 
@@ -67,7 +68,13 @@ if user_input:
                 time.sleep(0.02) # Adjusting the speed of typing effects
 
         st.session_state.messages.append({"role": "assistant", "content": bot_reply})
-            
 
+    save_chat(user_input, bot_reply, session_id="some_unique_id")
+
+
+if "messages" not in st.session_state:
+    st.session_state.messages = load_chat()  # Load from DB instead of blank
+
+    
     with open("chat_history.json", "w") as f:
         json.dump(st.session_state.messages, f)
