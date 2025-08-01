@@ -4,6 +4,7 @@ import streamlit as st
 from groq import Groq
 import os
 from dotenv import load_dotenv
+from pymongo import MongoClient
 from services.chat_history import save_chat, load_chat
 
 load_dotenv()
@@ -17,6 +18,11 @@ def load_groq_client():
     return Groq(api_key = api_key)
 
 client = load_groq_client() 
+
+# Initialize MongoDB client
+mongo_uri = st.secrets["MONGODB_URI"]
+mongo_client = MongoClient(mongo_uri)
+
 
 # Streamlit app configuration
 st.set_page_config(page_title="ByteBuddy ☕", page_icon="🤖", layout="centered")
@@ -75,6 +81,6 @@ if user_input:
 if "messages" not in st.session_state:
     st.session_state.messages = load_chat()  # Load from DB instead of blank
 
-    
+
     with open("chat_history.json", "w") as f:
         json.dump(st.session_state.messages, f)
