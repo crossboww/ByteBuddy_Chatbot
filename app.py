@@ -9,31 +9,27 @@ from services.chat_history import save_chat, load_chat
 
 load_dotenv()
 
+def get_secrets(key: str):
+    if key in st.secrets:
+        return st.secrets[key]
+    return os.getenv(key)
+
 @st.cache_resource
 def load_groq_client():
-    try:
-        api_key= st.secrets["GROQ_API_KEY"]
-    except:
-        api_key = os.getenv("GROQ_API_KEY")
-    return Groq(api_key = api_key)
+    return Groq(api_key =get_secrets("GROQ_API_KEY"))
 
 client = load_groq_client() 
 
 @st.cache_resource
 def get_mongo_client():
-    try:
-        mongo_uri = st.secrets["MONGODB_URI"]
-    except:
-        mongo_uri = os.getenv("MONGODB_URI")
-    return MongoClient(mongo_uri = mongo_uri)
+    return MongoClient(get_secrets("MONGODB_URI"))
 
 mongo_client = get_mongo_client()
+
 
 # Initialize MongoDB client
 #mongo_uri = st.secrets["MONGODB_URI"]
 #mongo_client = MongoClient(mongo_uri)
-
-
 # Streamlit app configuration
 st.set_page_config(page_title="ByteBuddy ☕", page_icon="🤖", layout="centered")
 
