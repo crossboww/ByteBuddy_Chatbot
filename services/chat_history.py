@@ -1,8 +1,13 @@
+from pymongo import MongoClient
 from db.mongo_client import get_mongo_client
 import time
+import streamlit as st
 
 
 client = get_mongo_client()
+# Initialize MongoDB client
+mongo_uri = st.secrets["MONGODB_URI"]
+mongo_client = MongoClient(mongo_uri)
 db = client["ByteBuddy"]
 chat_collection = db["chat_history"]
 
