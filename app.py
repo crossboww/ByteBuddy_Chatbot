@@ -25,7 +25,9 @@ def get_mongo_client():
         mongo_uri = st.secrets["MONGODB_URI"]
     except:
         mongo_uri = os.getenv("MONGODB_URI")
-    return MongoClient(mongo_uri)
+    return MongoClient(mongo_uri = mongo_uri)
+
+client = get_mongo_client()
 
 # Initialize MongoDB client
 mongo_uri = st.secrets["MONGODB_URI"]
