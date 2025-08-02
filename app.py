@@ -19,6 +19,14 @@ def load_groq_client():
 
 client = load_groq_client() 
 
+@st.cache_resource
+def get_mongo_client():
+    try:
+        mongo_uri = st.secrets["MONGODB_URI"]
+    except:
+        mongo_uri = os.getenv("MONGODB_URI")
+    return MongoClient(mongo_uri)
+
 # Initialize MongoDB client
 mongo_uri = st.secrets["MONGODB_URI"]
 mongo_client = MongoClient(mongo_uri)
