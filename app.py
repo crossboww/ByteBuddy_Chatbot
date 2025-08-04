@@ -6,12 +6,16 @@ import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from services.chat_history import save_chat, load_chat
+import uuid 
 
 load_dotenv()
 
 def get_secrets(key: str):
-    if key in st.secrets:
-        return st.secrets[key]
+    try:
+        if key in st.secrets:
+            return st.secrets[key]
+    except:
+        pass
     return os.getenv(key)
 
 @st.cache_resource
@@ -33,6 +37,10 @@ mongo_client = get_mongo_client()
 # Streamlit app configuration
 st.set_page_config(page_title="ByteBuddy ☕", page_icon="🤖", layout="centered")
 
+# Set unique sessin ID for each session
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+
 
 st.title("ByteBuddy ☕")
 st.caption("_Your friendly buddy - focused and helpful!_")
@@ -44,7 +52,7 @@ if st.sidebar.button("Clear Chat"):
 
 # Initialize session state for messages 
 if "messages" not in st.session_state:
-    st.session_state.messages = load_chat()
+    st.session_state.messages = load_chat(st.session_state.session_id)
 
 #Display chat history
 for msg in st.session_state.messages:
@@ -81,11 +89,7 @@ if user_input:
 
         st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
-    save_chat(user_input, bot_reply, session_id="some_unique_id")
-
-
-if "messages" not in st.session_state:
-    st.session_state.messages = [] # Load from DB instead of blank
+    save_chat(user_input, bot_reply, session_id=st.session_state.session_id)
 
 
     with open("chat_history.json", "w") as f:

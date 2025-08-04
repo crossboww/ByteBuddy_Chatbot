@@ -28,5 +28,6 @@ def save_chat(user_input, bot_reply, session_id = None):
 
     chat_collection.insert_many([chat, response])
 
-def load_chat():
-    return list(chat_collection.find({}, {"_id": 0}))
+def load_chat(session_id):
+    chats = list(chat_collection.find({"session_id": session_id}, {"_id": 0}))
+    return [{"role": chat["role"], "content": chat["content"]} for chat in chats]
