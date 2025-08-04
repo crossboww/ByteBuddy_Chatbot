@@ -3,7 +3,7 @@ from db.mongo_client import get_mongo_client
 import time
 import os
 
-# Unified secret fetcher
+# Unified secret fetcher for both Streamlit and Render Environments
 def get_secrets(key: str):
     try:
         import streamlit as st

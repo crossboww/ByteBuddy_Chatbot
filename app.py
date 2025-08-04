@@ -1,12 +1,13 @@
+import os
 import json
 import time
-import streamlit as st
+import uuid 
 from groq import Groq
-import os
+import streamlit as st
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from services.chat_history import save_chat, load_chat
-import uuid 
+
 
 load_dotenv()
 
@@ -30,10 +31,6 @@ def get_mongo_client():
 
 mongo_client = get_mongo_client()
 
-
-# Initialize MongoDB client
-#mongo_uri = st.secrets["MONGODB_URI"]
-#mongo_client = MongoClient(mongo_uri)
 # Streamlit app configuration
 st.set_page_config(page_title="ByteBuddy ☕", page_icon="🤖", layout="centered")
 
@@ -43,7 +40,7 @@ if "session_id" not in st.session_state:
 
 
 st.title("ByteBuddy ☕")
-st.caption("_Your friendly buddy - focused and helpful!_")
+st.caption("_Your friendly buddy - focused and helpful!")
 
 if st.sidebar.button("Clear Chat"):
     st.session_state.messages = []
