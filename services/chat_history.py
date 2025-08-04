@@ -1,41 +1,40 @@
 from pymongo import MongoClient
 from db.mongo_client import get_mongo_client
 import time
-import streamlit as st
 import os
 
-
-client = get_mongo_client()
-
-def get_secrets(key:str):
+# Unified secret fetcher
+def get_secrets(key: str):
     try:
-        return st.secrets[key]
-    except (KeyError, AttributeError):
-        return os.getenv(key)
-    
+        import streamlit as st
+        return st.secrets[key]  # For Streamlit Cloud
+    except (KeyError, ImportError, AttributeError):
+        return os.getenv(key)   # For Render / Local
+
 # Initialize MongoDB client
-mongo_uri = get_secrets("MONGODB_URI")
-mongo_client = MongoClient(mongo_uri)
+client = get_mongo_client()  # Use the imported client
 db = client["ByteBuddy"]
 chat_collection = db["chat_history"]
 
-def save_chat(user_input, bot_reply, session_id = None):
+# Save chat to MongoDB
+def save_chat(user_input, bot_reply, session_id=None):
     chat = {
         "role": "user",
-        "content":user_input,
-        "session_id":session_id,
+        "content": user_input,
+        "session_id": session_id,
         "timestamp": time.time()
     }
 
     response = {
         "role": "assistant",
         "content": bot_reply,
-         "session_id":session_id,
+        "session_id": session_id,
         "timestamp": time.time()
     }
 
     chat_collection.insert_many([chat, response])
 
+# Load chat from MongoDB
 def load_chat(session_id):
     chats = list(chat_collection.find({"session_id": session_id}, {"_id": 0}))
     return [{"role": chat["role"], "content": chat["content"]} for chat in chats]
