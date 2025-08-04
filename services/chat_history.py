@@ -30,8 +30,3 @@ def save_chat(user_input, bot_reply, session_id = None):
 
 def load_chat():
     return list(chat_collection.find({}, {"_id": 0}))
-
-
-
-
-

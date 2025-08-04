@@ -44,7 +44,7 @@ if st.sidebar.button("Clear Chat"):
 
 # Initialize session state for messages 
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = load_chat()
 
 #Display chat history
 for msg in st.session_state.messages:
@@ -85,7 +85,7 @@ if user_input:
 
 
 if "messages" not in st.session_state:
-    st.session_state.messages = load_chat()  # Load from DB instead of blank
+    st.session_state.messages = [] # Load from DB instead of blank
 
 
     with open("chat_history.json", "w") as f:
