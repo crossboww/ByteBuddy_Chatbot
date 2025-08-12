@@ -6,7 +6,7 @@ from groq import Groq
 import streamlit as st
 from dotenv import load_dotenv
 from pymongo import MongoClient
-from services.chat_history import save_chat, load_chat
+from services.chat_history import save_chat, load_chat, get_all_sessions
 
 
 load_dotenv()
@@ -32,7 +32,7 @@ def get_mongo_client():
 mongo_client = get_mongo_client()
 
 # Streamlit app configuration
-st.set_page_config(page_title="ByteBuddy ☕", page_icon="🤖", layout="centered")
+st.set_page_config(page_title="ByteBuddy☕", page_icon="", layout="centered")
 
 # Set unique sessin ID for each session
 if "session_id" not in st.session_state:
@@ -42,10 +42,23 @@ if "session_id" not in st.session_state:
 st.title("ByteBuddy ☕")
 st.caption("_Your friendly buddy - focused and helpful!")
 
-if st.sidebar.button("Clear Chat"):
+# Sidebar for Session Management
+st.sidebar.title("Session Management")
+if st.sidebar.button("💬 New Chat"):
+    # Save the current session_id into a list if you want history of sessions
+    if "past_sessions" not in st.session_state:
+        st.session_state.past_sessions = []
+    st.session_state.past_sessions.append(st.session_state.session_id)
+
+    #Reset session_id for a new chat
+    st.session_state.session_id = str(uuid.uuid4())
     st.session_state.messages = []
     st.rerun()
 
+# Clear Chat Current_Session History
+if st.sidebar.button("Clear Chat", icon="🗑️"):
+    st.session_state.messages = []
+    st.rerun()
 
 # Initialize session state for messages 
 if "messages" not in st.session_state:
@@ -87,6 +100,10 @@ if user_input:
         st.session_state.messages.append({"role": "assistant", "content": bot_reply})
 
     save_chat(user_input, bot_reply, session_id=st.session_state.session_id)
+
+    sessions = get_all_sessions()
+    session_options = [f"{s['title']} - {s['session_id'][:6]}" for s in sessions]
+    selected = st.sidebar.selectbox("Previous Chat", session_options)
 
 
     with open("chat_history.json", "w") as f:
