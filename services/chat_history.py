@@ -1,57 +1,49 @@
 from pymongo import MongoClient
 from db.mongo_client import get_mongo_client
 import time
-import os
 
-# Unified secret fetcher for both Streamlit and Render Environments
-def get_secrets(key: str):
-    try:
-        import streamlit as st
-        return st.secrets[key]  # For Streamlit Cloud
-    except (KeyError, ImportError, AttributeError):
-        return os.getenv(key)   # For Render / Local
-
-# Initialize MongoDB client
-client = get_mongo_client()  # Use the imported client
+# Same DB + collections
+client = get_mongo_client()
 db = client["ByteBuddy"]
-chat_collection = db["chat_history"]
+chat_collection = db["chat_history"]     # stores all messages
+sessions_collection = db["chat_sessions"]# stores per-session meta (title, user, etc.)
 
-# Save chat to MongoDB
-def save_chat(user_input, bot_reply, session_id=None):
-    timestamp = time.time()
+def save_chat(user: str, session_id: str, user_input: str, bot_reply: str):
+    """
+    Save one user message + one assistant reply for a user + session.
+    Also creates session metadata (title) when session is first seen.
+    """
+    now = time.time()
 
-    #Check if this session_id already exists
-    existing_chat = chat_collection.find_one({"session_id": session_id})
-
-    #if it's new session, then add title using First user_input
-    if not existing_chat:
-        chat_metadata = {
+    # make session doc if it's new
+    if not sessions_collection.find_one({"user": user, "session_id": session_id}):
+        sessions_collection.insert_one({
+            "user": user,
             "session_id": session_id,
-            "title": user_input,
-            "timestamp": timestamp
-        }
-        db["chat_sessions"].insert_one(chat_metadata)
+            "title": (user_input or "New chat")[:60],
+            "created_at": now
+        })
 
-    chat = {
-        "role": "user",
-        "content": user_input,
-        "session_id": session_id,
-        "timestamp": time.time()
-    }
+    chat_docs = [
+        {"user": user, "session_id": session_id, "role": "user",      "content": user_input, "timestamp": time.time()},
+        {"user": user, "session_id": session_id, "role": "assistant", "content": bot_reply,  "timestamp": time.time()},
+    ]
+    chat_collection.insert_many(chat_docs)
 
-    response = {
-        "role": "assistant",
-        "content": bot_reply,
-        "session_id": session_id,
-        "timestamp": time.time()
-    }
+def load_chat(user: str, session_id: str):
+    """Return all messages for a user+session as [{role, content}, ...]."""
+    chats = list(
+        chat_collection.find(
+            {"user": user, "session_id": session_id},
+            {"_id": 0, "role": 1, "content": 1}
+        ).sort("timestamp", 1)
+    )
+    return [{"role": c["role"], "content": c["content"]} for c in chats]
 
-    chat_collection.insert_many([chat, response])
-
-# Load chat from MongoDB
-def load_chat(session_id):
-    chats = list(chat_collection.find({"session_id": session_id}, {"_id": 0}))
-    return [{"role": chat["role"], "content": chat["content"]} for chat in chats]
-
-def get_all_sessions():
-    return list(db["chat_sessions"].find({}, {"_id": 0}))
+def get_all_sessions(user: str):
+    """List session cards for sidebar select."""
+    cur = sessions_collection.find(
+        {"user": user},
+        {"_id": 0, "session_id": 1, "title": 1, "created_at": 1}
+    ).sort("created_at", -1)
+    return list(cur)
