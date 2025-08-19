@@ -28,7 +28,7 @@ def load_groq_client():
 client = load_groq_client()
 
 # ------------------------ Streamlit UI config ----------------------------
-st.set_page_config(page_title="ByteBuddy ☕", page_icon="☕", layout="centered")
+st.set_page_config(page_title="ByteBuddy ☕",layout="centered")
 st.title("ByteBuddy ☕")
 st.caption("Your friendly buddy — focused and helpful!")
 
