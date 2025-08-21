@@ -1,7 +1,6 @@
 import time
 from db.mongo_client import get_mongo_client
 
-# Mongo connection
 client = get_mongo_client()
 db = client["ByteBuddy"]
 chat_collection = db["chat_history"]       # all messages
@@ -11,7 +10,6 @@ def save_chat(user: str, session_id: str, user_input: str, bot_reply: str):
     """Save user+bot messages in chat_history, and create session metadata if new."""
     now = time.time()
 
-    # if session doesn't exist → create it
     if not sessions_collection.find_one({"user": user, "session_id": session_id}):
         sessions_collection.insert_one({
             "user": user,
@@ -20,7 +18,6 @@ def save_chat(user: str, session_id: str, user_input: str, bot_reply: str):
             "created_at": now
         })
 
-    # insert user + assistant message pair
     chat_docs = [
         {"user": user, "session_id": session_id, "role": "user",      "content": user_input, "timestamp": now},
         {"user": user, "session_id": session_id, "role": "assistant", "content": bot_reply,  "timestamp": now},
