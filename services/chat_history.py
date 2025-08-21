@@ -1,21 +1,17 @@
-from pymongo import MongoClient
-from db.mongo_client import get_mongo_client
 import time
+from db.mongo_client import get_mongo_client
 
-# Same DB + collections
+# Mongo connection
 client = get_mongo_client()
 db = client["ByteBuddy"]
-chat_collection = db["chat_history"]     # stores all messages
-sessions_collection = db["chat_sessions"]# stores per-session meta (title, user, etc.)
+chat_collection = db["chat_history"]       # all messages
+sessions_collection = db["chat_sessions"]  # session metadata
 
 def save_chat(user: str, session_id: str, user_input: str, bot_reply: str):
-    """
-    Save one user message + one assistant reply for a user + session.
-    Also creates session metadata (title) when session is first seen.
-    """
+    """Save user+bot messages in chat_history, and create session metadata if new."""
     now = time.time()
 
-    # make session doc if it's new
+    # if session doesn't exist → create it
     if not sessions_collection.find_one({"user": user, "session_id": session_id}):
         sessions_collection.insert_one({
             "user": user,
@@ -24,14 +20,15 @@ def save_chat(user: str, session_id: str, user_input: str, bot_reply: str):
             "created_at": now
         })
 
+    # insert user + assistant message pair
     chat_docs = [
-        {"user": user, "session_id": session_id, "role": "user",      "content": user_input, "timestamp": time.time()},
-        {"user": user, "session_id": session_id, "role": "assistant", "content": bot_reply,  "timestamp": time.time()},
+        {"user": user, "session_id": session_id, "role": "user",      "content": user_input, "timestamp": now},
+        {"user": user, "session_id": session_id, "role": "assistant", "content": bot_reply,  "timestamp": now},
     ]
     chat_collection.insert_many(chat_docs)
 
 def load_chat(user: str, session_id: str):
-    """Return all messages for a user+session as [{role, content}, ...]."""
+    """Fetch all messages for a session (sorted)."""
     chats = list(
         chat_collection.find(
             {"user": user, "session_id": session_id},
@@ -41,7 +38,7 @@ def load_chat(user: str, session_id: str):
     return [{"role": c["role"], "content": c["content"]} for c in chats]
 
 def get_all_sessions(user: str):
-    """List session cards for sidebar select."""
+    """Return list of sessions for sidebar (latest first)."""
     cur = sessions_collection.find(
         {"user": user},
         {"_id": 0, "session_id": 1, "title": 1, "created_at": 1}

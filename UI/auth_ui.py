@@ -24,8 +24,8 @@ def show_auth_ui():
             else:
                 ok, msg = signup_user(username, password)
                 if ok:
-                    st.session_state.user = username   # 👈 mark user as logged in
+                    st.session_state.user = username   # logged in immediately
                     st.success("Signup successful! Redirecting to chatbot...")
-                    st.rerun()  # 👈 immediately rerun to load chatbot
+                    st.rerun()
                 else:
                     st.error(msg)
