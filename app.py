@@ -18,12 +18,11 @@ st.caption("Your friendly buddy — focused and helpful!")
 # ------------------------ Helpers ---------------------------
 def _get_token_from_url() -> str | None:
     # Compatible way for most Streamlit versions
-    params = st.experimental_get_query_params()
-    vals = params.get("token")
-    return vals[0] if vals else None
+    params = st.query_params
+    return params.get("token", None)
 
 def _clear_token_from_url():
-    st.experimental_set_query_params()  # set to empty => removes token from URL
+    st.query_params = {} # set to empty => removes token from URL
 
 # ------------------------ Session bootstrap -----------------
 if "user" not in st.session_state:

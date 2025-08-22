@@ -3,7 +3,7 @@ from services.auth import signup_user, login_user
 
 def _set_token_in_url(token: str):
     # Works on all current Streamlit versions
-    st.experimental_set_query_params(token=token)
+    st.query_params["token"] = token
 
 def show_auth_ui():
     st.subheader("🔐 Login / Signup")

@@ -70,5 +70,37 @@
   {
     "role": "assistant",
     "content": "Hehe, right back at ya! 😄"
+  },
+  {
+    "role": "user",
+    "content": "how's going on"
+  },
+  {
+    "role": "assistant",
+    "content": "Nothing much, just chatting with you!"
+  },
+  {
+    "role": "user",
+    "content": "okay bruh"
+  },
+  {
+    "role": "assistant",
+    "content": "Okay bruh!"
+  },
+  {
+    "role": "user",
+    "content": "why your not using emojis"
+  },
+  {
+    "role": "assistant",
+    "content": "I can use emojis if you'd like! Okay bruh 😊"
+  },
+  {
+    "role": "user",
+    "content": "okay !! give me some nice emojis"
+  },
+  {
+    "role": "assistant",
+    "content": "Here you go! 🎉😊👍💕😄👫💬"
   }
 ]
