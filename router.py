@@ -1,10 +1,9 @@
-from tools.weather_tool import get_weather
+from tools.weather_tool import get_weather, extract_city
 # future: from tools.lyrics_tool import get_lyrics
 # future: from tools.news_tool import get_news
 
 def route_query(query: str):
     query = query.lower()
-
     if "weather" in query or "temperature" in query:
         return "weather"
     # elif "lyrics" in query or "song" in query:
@@ -18,12 +17,15 @@ def route_query(query: str):
 def handle_user_query(user_input: str, messages: list, llm_callback):
     """
     Routes the user query:
-      - Weather → calls weather tool
+      - Weather → calls weather tool (asks for city if missing)
       - Else → calls LLM with full chat history
     """
     tool = route_query(user_input)
 
     if tool == "weather":
+        city = extract_city(user_input)
+        if not city:
+            return "🌍 I need a city name. Which city’s weather would you like to know?"
         return get_weather(user_input)
 
     # elif tool == "lyrics":

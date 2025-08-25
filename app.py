@@ -7,7 +7,7 @@ from UI.auth_ui import show_auth_ui
 from router import handle_user_query
 from LLM_Agent import generate_response, typing_effect
 from services.chat_history import save_chat, load_chat, get_all_sessions
-from services.auth import verify_session, logout_user  # <-- NEW
+from services.auth import verify_session, logout_user
 
 # ------------------------ Config ----------------------------
 load_dotenv()
@@ -17,12 +17,11 @@ st.caption("Your friendly buddy — focused and helpful!")
 
 # ------------------------ Helpers ---------------------------
 def _get_token_from_url() -> str | None:
-    # Compatible way for most Streamlit versions
     params = st.query_params
     return params.get("token", None)
 
 def _clear_token_from_url():
-    st.query_params = {} # set to empty => removes token from URL
+    st.query_params = {}  # clear query params
 
 # ------------------------ Session bootstrap -----------------
 if "user" not in st.session_state:
@@ -30,7 +29,7 @@ if "user" not in st.session_state:
 if "session_token" not in st.session_state:
     st.session_state.session_token = None
 
-# Try auto-restore from URL token if user is None
+# Try auto-restore from URL token
 if st.session_state.user is None:
     url_token = _get_token_from_url()
     token_to_check = st.session_state.session_token or url_token
@@ -45,7 +44,7 @@ if st.session_state.user is None:
     show_auth_ui()
     st.stop()
 
-# ------------------------ Session (chat) --------------------
+# ------------------------ Chat Session ----------------------
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 
@@ -65,18 +64,16 @@ if st.sidebar.button("🧹 Clear Chat", use_container_width=True):
     st.rerun()
 
 if st.sidebar.button("🚪 Logout", use_container_width=True):
-    # Clean server-side session
     try:
         if st.session_state.get("session_token"):
             logout_user(st.session_state["session_token"])
     except Exception:
         pass
-    # Clean client-side state + URL
     _clear_token_from_url()
     st.session_state.clear()
     st.rerun()
 
-# previous sessions
+# Previous sessions
 sessions = get_all_sessions(st.session_state.user)
 if sessions:
     label_map = {f"{s['title']}  —  {s['session_id'][:6]}": s["session_id"] for s in sessions}
@@ -86,12 +83,12 @@ if sessions:
         st.session_state.messages = load_chat(st.session_state.user, st.session_state.session_id)
         st.rerun()
 
-# ------------------------ History ---------------------------
+# ------------------------ Chat History ----------------------
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# ------------------------ Input + LLM -----------------------
+# ------------------------ Input + Agent AI -----------------
 user_input = st.chat_input("Type your message here...")
 
 if user_input:
@@ -101,6 +98,7 @@ if user_input:
 
     with st.chat_message("assistant"):
         with st.spinner("ByteBuddy is thinking..."):
+            # Route query through Agent AI router
             bot_reply = handle_user_query(
                 user_input,
                 st.session_state.messages,

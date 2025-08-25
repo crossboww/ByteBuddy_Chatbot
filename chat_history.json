@@ -1,106 +1,26 @@
 [
   {
     "role": "user",
-    "content": "hii"
+    "content": "hi burh"
   },
   {
     "role": "assistant",
-    "content": "Hi! It's nice to meet you. Is there something I can help you with or would you like to chat?"
+    "content": "Hi there! It looks like there might be a small typo in your message. Did you mean to say \"hi\" or perhaps \"hi byte\"? Either way, I'm happy to chat with you! 😊 What's on your mind today?"
   },
   {
     "role": "user",
-    "content": "what's going on"
+    "content": "bruh what is a weather in Delhi ?"
   },
   {
     "role": "assistant",
-    "content": "It seems like you're just checking in! No specific topic or question in mind, right? Would you like to talk about your day, or is there something on your mind that you'd like to discuss? I'm all ears!"
+    "content": "\n🌤️ **Weather in Delhi:**\n- Temperature: 27.99°C (Feels like 32.54°C)\n- Min/Max: 27.99°C / 27.99°C\n- Condition: Overcast clouds\n- Humidity: 83%\n- Pressure: 999 hPa\n- Wind: 3.73 m/s, Direction 105°\n- Visibility: 10.0 km\n        "
   },
   {
     "role": "user",
-    "content": "wasuup"
+    "content": "in navsari ?"
   },
   {
     "role": "assistant",
-    "content": "Not much! Just hanging out and ready to chat. You know, the usual. How about you? Anything new or exciting happening in your world?"
-  },
-  {
-    "role": "user",
-    "content": "dont right more thngs"
-  },
-  {
-    "role": "assistant",
-    "content": "I'll keep my responses short and sweet from now on."
-  },
-  {
-    "role": "user",
-    "content": "yessnccol"
-  },
-  {
-    "role": "assistant",
-    "content": "Got it!"
-  },
-  {
-    "role": "user",
-    "content": "what dose mean by kela"
-  },
-  {
-    "role": "assistant",
-    "content": "You meant \"what does 'kela' mean\"? Kela is a Hindi word that means \"banana\"."
-  },
-  {
-    "role": "user",
-    "content": "heyy"
-  },
-  {
-    "role": "assistant",
-    "content": "Heyy! 😊"
-  },
-  {
-    "role": "user",
-    "content": "how are you"
-  },
-  {
-    "role": "assistant",
-    "content": "I'm good, thanks! I'm a chatbot, so I don't have feelings like humans do, but I'm always happy to chat with you! 😊"
-  },
-  {
-    "role": "user",
-    "content": "hehe"
-  },
-  {
-    "role": "assistant",
-    "content": "Hehe, right back at ya! 😄"
-  },
-  {
-    "role": "user",
-    "content": "how's going on"
-  },
-  {
-    "role": "assistant",
-    "content": "Nothing much, just chatting with you!"
-  },
-  {
-    "role": "user",
-    "content": "okay bruh"
-  },
-  {
-    "role": "assistant",
-    "content": "Okay bruh!"
-  },
-  {
-    "role": "user",
-    "content": "why your not using emojis"
-  },
-  {
-    "role": "assistant",
-    "content": "I can use emojis if you'd like! Okay bruh 😊"
-  },
-  {
-    "role": "user",
-    "content": "okay !! give me some nice emojis"
-  },
-  {
-    "role": "assistant",
-    "content": "Here you go! 🎉😊👍💕😄👫💬"
+    "content": "Navsari! 🌴\n\n**Weather in Navsari:**\n- Temperature: 29.11°C (Feels like 34.44°C)\n- Min/Max: 24.44°C / 33.33°C\n- Condition: Partly cloudy\n- Humidity: 76%\n- Pressure: 1001 hPa\n- Wind: 4.12 m/s, Direction 214°\n- Visibility: 10.0 km\n\nPlease note that the weather conditions are subject to change and this information is updated in real-time."
   }
 ]
