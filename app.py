@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from UI.auth_ui import show_auth_ui
 from router import handle_user_query
 from LLM_Agent import generate_response, typing_effect
-from services.chat_history import save_chat, load_chat, get_all_sessions
+from services.chat_history import save_chat, load_chat, load_user_history, get_all_sessions
 from services.auth import verify_session, logout_user
 
 # ------------------------ Config ----------------------------
@@ -98,10 +98,13 @@ if user_input:
 
     with st.chat_message("assistant"):
         with st.spinner("ByteBuddy is thinking..."):
+            
+            #Inside the Assistent responce
+            past_memory = load_user_history(st.session_state.user, limit = 20)
             # Route query through Agent AI router
             bot_reply = handle_user_query(
                 user_input,
-                st.session_state.messages,
+                past_memory + st.session_state.messages,
                 generate_response
             )
             typing_effect(bot_reply)

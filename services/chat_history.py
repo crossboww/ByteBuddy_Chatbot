@@ -34,6 +34,18 @@ def load_chat(user: str, session_id: str):
     )
     return [{"role": c["role"], "content": c["content"]} for c in chats]
 
+def load_user_history(user: str, limit: int = 20):
+    """Fetch all last N messages across all sessions for a user (for memory recall)."""
+    chats = list(
+        chat_collection.find(
+            {"user": user},
+            {"_id": 0, "role": 1, "content": 1}
+        ).sort("timestamp", -1).limit(limit)
+    )
+    # Reverse to get chronological order
+    chats.reverse()
+    return [{"role": c["role"], "content": c["content"]} for c in chats]
+
 def get_all_sessions(user: str):
     """Return list of sessions for sidebar (latest first)."""
     cur = sessions_collection.find(
