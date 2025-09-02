@@ -34,7 +34,7 @@ def generate_response(messages: list) -> str:
     """
     try:
         resp = client.chat.completions.create(
-            model="llama3-70b-8192",
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "system", "content": (
                 "You are ByteBuddy ☕, a friendly chatbot. "
                 "Answer clearly, helpfully, and stay within the user’s context. "
